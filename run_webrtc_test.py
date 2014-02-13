@@ -1,12 +1,15 @@
 import os
 import subprocess 
 from random import randint
+import threading
 
-results_file_path = "/home/ycinar/okul/src/out/Debug/pesq_results"
-test_command = "/home/ycinar/okul/src/out/Debug/browser_tests --gtest_filter=WebrtcAudioQualityBrowserTest.MANUAL_TestAudioQuality --single_process"
+workspace = "/home/ycinar/okul/src/out/Debug/"
+results_file_path = workspace + "pesq_results"
+test_command = workspace + "browser_tests --gtest_filter=WebrtcAudioQualityBrowserTest.MANUAL_TestAudioQuality --single_process"
+
 def execute_test():
 	# execute the tests
-	for x in range(0,5):
+	for x in range(0,1):
 		print "Start the test no:%d" % (x)
 		subprocess.call([test_command], shell=True)
 		print "Completed the test..."
@@ -16,9 +19,20 @@ def add_header_for_test_case(header):
 	results_file.write(header)
 	results_file.close()
 
-def netem_jitter():	
+class netem_jitter_thread(threading.Thread):
+	def __init__(self, name):
+		threading.Thread.__init__(self)
+		#self.threadID = threadID
+		self.name = name
+		self.shutdown = False
+	def run(self):
+		print "Starting " + self.name
+		while not self.shutdown:
+			execute_netem()
+		print "Exiting " + self.name
+
+def execute_netem():
 	delay = randint(50,500)
-	print "delay: ", delay
 	netem_command = "sudo tc qdisc change dev lo root handle 1: netem delay %dms" % delay
 	subprocess.call([netem_command], shell=True)
 
@@ -30,10 +44,15 @@ def run_scenarios():
 		pass
 
 	# add header
-	add_header_for_test_case("Results with no network config\n")
+	#add_header_for_test_case("Results with no network config\n")
+
+	netem_thread = netem_jitter_thread('netem_thread')
+	netem_thread.start()
 
 	# execute the tests
 	execute_test()
+	netem_thread.shutdown = True
+	netem_thread.join()
 
 	'''
 	# change the network config
