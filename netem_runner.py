@@ -1,4 +1,4 @@
 import run_webrtc_test
 
-while True:
-	run_webrtc_test.netem_jitter()
+netem_thread = run_webrtc_test.netem_jitter_thread('netem_thread')
+netem_thread.start()

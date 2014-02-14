@@ -2,13 +2,36 @@ import os
 import subprocess 
 from random import randint
 import threading
+import shutil
 
-workspace = "/home/ycinar/okul/src/out/Debug/"
-results_file_path = workspace + "pesq_results"
-test_command = workspace + "browser_tests --gtest_filter=WebrtcAudioQualityBrowserTest.MANUAL_TestAudioQuality --single_process"
+workspace = ""
+results_file_path = "/home/ycinar/pesq_results"
+test_command = ""
+
+def prep_env():
+	global workspace
+	global test_command
+
+	if os.path.isdir("/home/ycinar/dev/src/out/Debug/"):
+		workspace = "/home/ycinar/dev/src/out/Debug/"
+	elif os.path.isdir("/home/ycinar/okul/src/out/Debug/"):
+		workspace = "/home/ycinar/okul/src/out/Debug/"
+	else:
+		print "workspace is not found - script will fail"
+	print "workspace: ", workspace	
+	test_command = workspace + "browser_tests --gtest_filter=WebrtcAudioQualityBrowserTest.MANUAL_TestAudioQuality --single_process"
+
+	# remove the results file
+	try:
+		os.remove(results_file_path)
+	except OSError:
+		pass
+		
+	open(results_file_path, 'a').close()
 
 def execute_test():
 	# execute the tests
+	print test_command
 	for x in range(0,1):
 		print "Start the test no:%d" % (x)
 		subprocess.call([test_command], shell=True)
@@ -37,12 +60,6 @@ def execute_netem():
 	subprocess.call([netem_command], shell=True)
 
 def run_scenarios():
-	# remove the results file
-	try:
-		os.remove(results_file_path)
-	except OSError:
-		pass
-
 	# add header
 	#add_header_for_test_case("Results with no network config\n")
 
@@ -76,8 +93,10 @@ def report_results():
 			print line
 
 	results_file.close()
+	shutil.copy(results_file_path, '.')
 
 if __name__ == '__main__':
+	prep_env()
 	run_scenarios()
 	report_results()
 	subprocess.call(["sudo tc qdisc del dev lo root"], shell=True)
