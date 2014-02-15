@@ -29,6 +29,11 @@ def prep_env():
 		
 	open(results_file_path, 'a').close()
 
+	dummynet_command = "sudo ipfw add 100 pipe 1 ip from 127.0.0.1 to 127.0.0.1 in"
+	subprocess.call([dummynet_command], shell=True)
+	dummynet_command = "sudo ipfw add 100 allow ip from 127.0.0.1 to 127.0.0.1 out"
+	subprocess.call([dummynet_command], shell=True)
+
 def execute_test():
 	# execute the tests
 	print test_command
@@ -42,7 +47,7 @@ def add_header_for_test_case(header):
 	results_file.write(header)
 	results_file.close()
 
-class netem_jitter_thread(threading.Thread):
+class jitter_thread(threading.Thread):
 	def __init__(self, name):
 		threading.Thread.__init__(self)
 		#self.threadID = threadID
@@ -51,7 +56,7 @@ class netem_jitter_thread(threading.Thread):
 	def run(self):
 		print "Starting " + self.name
 		while not self.shutdown:
-			execute_netem()
+			execute_dummynet()
 		print "Exiting " + self.name
 
 def execute_netem():
@@ -59,11 +64,16 @@ def execute_netem():
 	netem_command = "sudo tc qdisc change dev lo root handle 1: netem delay %dms" % delay
 	subprocess.call([netem_command], shell=True)
 
+def execute_dummynet():
+	delay = randint(50, 500)
+	dummynet_command = "sudo ipfw pipe 1 config delay %dms" % delay
+	subprocess.call([dummynet_command], shell=True)
+
 def run_scenarios():
 	# add header
 	#add_header_for_test_case("Results with no network config\n")
 
-	netem_thread = netem_jitter_thread('netem_thread')
+	netem_thread = jitter_thread('netem_thread')
 	netem_thread.start()
 
 	# execute the tests
