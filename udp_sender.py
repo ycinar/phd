@@ -15,6 +15,6 @@ sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
 
 while True:
-	MESSAGE = "Hello, World! Time is " + datetime.datetime.now().time() .isoformat()
+	MESSAGE = datetime.datetime.now().time() .isoformat()
 	print "message:", MESSAGE 
 	sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
