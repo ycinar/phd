@@ -9,12 +9,12 @@ with open(results_file_path, "r") as results_file:
 		else:
 			time_stamps.append(line)
 
-print time_stamps
+#print time_stamps
 
 if time_stamps == sorted(time_stamps):
-	print 'original list is sorted'
+	print 'original list is sorted - packets arrived in order.'
 else:
-	print 'original list is not sorted'
+	print 'original list is not sorted - out of order packets detected'
 	for x, y in zip (time_stamps, sorted(time_stamps)):
 		if (x!=y):
 			print 'Difference... x:%s y:%s' % (x,y)
