@@ -83,6 +83,7 @@ def run_scenarios():
 	netem_thread = jitter_thread('netem_thread')
 	netem_thread.start()
 
+	add_header_for_test_case("Results with network config\n")
 	execute_test()
 
 	netem_thread.shutdown = True
