@@ -5,7 +5,9 @@ import threading
 import shutil
 
 workspace = ""
-results_file_path = "/home/ycinar/pesq_results"
+#results_file_path = "/home/ycinar/pesq_results"
+results_file_path = "/home/ycinar/okul/src/out/Debug/pesq_results"
+
 test_command = ""
 
 def prep_env():
