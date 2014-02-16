@@ -74,7 +74,7 @@ def execute_dummynet():
 def run_scenarios():
 	# add header
 	import datetime
-	add_header_for_test_case("Date-time: " + datetime.datetime.now().time() .isoformat())
+	add_header_for_test_case("Date-time: " + datetime.datetime.now().time() .isoformat() + "\n")
 	add_header_for_test_case("Results with no network config\n")
 
 	# execute the tests
