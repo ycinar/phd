@@ -113,5 +113,5 @@ if __name__ == '__main__':
 	run_scenarios()
 	report_results()
 	subprocess.call(["sudo tc qdisc del dev lo root"], shell=True)
-	subprocess.call(["ipfw pipe 1 delete"], shell=True)
-	subprocess.call(["ipfw -q flush"], shell=True)
+	subprocess.call(["sudo ipfw pipe 1 delete"], shell=True)
+	subprocess.call(["sudo ipfw -q flush"], shell=True)
