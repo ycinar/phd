@@ -73,11 +73,14 @@ def run_scenarios():
 	# add header
 	#add_header_for_test_case("Results with no network config\n")
 
+	# execute the tests
+	execute_test()
+
 	netem_thread = jitter_thread('netem_thread')
 	netem_thread.start()
 
-	# execute the tests
 	execute_test()
+
 	netem_thread.shutdown = True
 	netem_thread.join()
 
@@ -110,3 +113,5 @@ if __name__ == '__main__':
 	run_scenarios()
 	report_results()
 	subprocess.call(["sudo tc qdisc del dev lo root"], shell=True)
+	subprocess.call(["ipfw pipe 1 delete"], shell=True)
+	subprocess.call(["ipfw -q flush"], shell=True)
