@@ -97,7 +97,7 @@ def run_scenarios():
 
 	# 1. execute the tests no network cahnge
 	add_header_for_test_case("Results with no network config\n")
-	#execute_test()
+	execute_test()
 
 	global min_delay
 	global max_delay
