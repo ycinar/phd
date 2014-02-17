@@ -3,12 +3,15 @@ import subprocess
 from random import randint
 import threading
 import shutil
+import json
 
 workspace = ""
 results_file_path = "/home/ycinar/pesq_results" # need to hard code as it is in hardcoded in the C++ application
 test_command = ""
-min_delay = 50
-max_delay = 100
+min_delay = 1
+max_delay = 1
+number_of_execution_for_each_scenario = 1
+delay_list = list()
 
 def prep_env():
 	global workspace
@@ -38,13 +41,27 @@ def prep_env():
 	dummynet_command = "sudo ipfw pipe 1 config delay 1ms" # doesnt work without this
 	subprocess.call([dummynet_command], shell=True)	
 
+def read_jitter_config():
+	global delay_list
+	global number_of_execution_for_each_scenario
+
+	json_data = open('jitter_config')
+	data = json.load(json_data)
+
+	number_of_execution_for_each_scenario = data['number_of_execution_for_each_scenario']
+	
+	for delay in data['delay']:
+		delay_list.append(delay)
+
+	json_data.close()
+
 def execute_test():
 	# execute the tests
 	print test_command
-	for x in range(0,5):
-		print "Start the test no:%d" % (x)
+	for x in range(0,number_of_execution_for_each_scenario):
+		print "Start the execution no:%d" % (x)
 		subprocess.call([test_command], shell=True)
-		print "Completed the test..."
+		print "Completed the execution..."
 
 def add_header_for_test_case(header):
 	results_file = open(results_file_path, "a")
@@ -80,69 +97,27 @@ def run_scenarios():
 
 	# 1. execute the tests no network cahnge
 	add_header_for_test_case("Results with no network config\n")
-	execute_test()
-
-	jitter_thread = JitterThread('jitter_thread')
+	#execute_test()
 
 	global min_delay
 	global max_delay
-	
-	# 2. execute the tests with network cahnge	
-	min_delay=50
-	max_delay=80
-	jitter_thread.start()	
-	add_header_for_test_case("Results with network config min_delay: %d  max_delay: %d\n" % (min_delay, max_delay))
-	execute_test()
-	jitter_thread.shutdown = True
-	jitter_thread.join()
 
-	# 3. execute the tests with network cahnge
-	jitter_thread = JitterThread('jitter_thread')
-	min_delay=50
-	max_delay=100
-	jitter_thread.shutdown = False
-	jitter_thread.start()
-	add_header_for_test_case("Results with network config min_delay: %d  max_delay: %d\n" % (min_delay, max_delay))
-	execute_test()
-	jitter_thread.shutdown = True
-	jitter_thread.join()
-
-
-	# 4. execute the tests with network cahnge
-	jitter_thread = JitterThread('jitter_thread')
-	min_delay=50
-	max_delay=150
-	jitter_thread.shutdown = False
-	jitter_thread.start()
-	add_header_for_test_case("Results with network config min_delay: %d  max_delay: %d\n" % (min_delay, max_delay))
-	execute_test()
-	jitter_thread.shutdown = True
-	jitter_thread.join()
-
-	# 4. execute the tests with network cahnge
-	jitter_thread = JitterThread('jitter_thread')
-	min_delay=50
-	max_delay=200
-	jitter_thread.shutdown = False
-	jitter_thread.start()
-	add_header_for_test_case("Results with network config min_delay: %d  max_delay: %d\n" % (min_delay, max_delay))
-	execute_test()
-	jitter_thread.shutdown = True
-	jitter_thread.join()
-
+	for delay in delay_list:
+		min_delay = int(delay[0])
+		max_delay = min_delay + int(delay[1])
+		print "Starting the tests for (%d,%d)" % (min_delay, max_delay)
+		add_header_for_test_case("Results with network config min_delay: %d  max_delay: %d\n" % (min_delay, max_delay))
+		jitter_thread = JitterThread('jitter_thread')
+		jitter_thread.shutdown = False
+		jitter_thread.start()
+		execute_test()
+		jitter_thread.shutdown = True
+		jitter_thread.join()
 
 	'''	
 	# change the network config
 	subprocess.call(["sudo tc qdisc add dev lo root netem delay 100ms 50ms"], shell=True)
 	add_header_for_test_case("Results with 100ms 50ms\n")
-	execute_test()
-	
-	subprocess.call(["sudo tc qdisc add dev lo root netem delay 100ms 100ms"], shell=True)
-	add_header_for_test_case("Results with 100ms 100ms\n")
-	execute_test()
-
-	subprocess.call(["sudo tc qdisc add dev lo root netem delay 100ms 150ms"], shell=True)
-	add_header_for_test_case("Results with 100ms 150ms\n")
 	execute_test()
 	'''
 
@@ -157,6 +132,7 @@ def report_results():
 
 if __name__ == '__main__':
 	prep_env()
+	read_jitter_config()
 	run_scenarios()
 	report_results()
 	subprocess.call(["sudo tc qdisc del dev lo root"], shell=True)
