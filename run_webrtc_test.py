@@ -6,9 +6,9 @@ import shutil
 
 workspace = ""
 results_file_path = "/home/ycinar/pesq_results" # need to hard code as it is in hardcoded in the C++ application
-# results_file_path = "/home/ycinar/dev/src/out/Debug/pesq_results"
-
 test_command = ""
+min_delay = 50
+max_delay = 100
 
 def prep_env():
 	global workspace
@@ -41,7 +41,7 @@ def prep_env():
 def execute_test():
 	# execute the tests
 	print test_command
-	for x in range(0,1):
+	for x in range(0,5):
 		print "Start the test no:%d" % (x)
 		subprocess.call([test_command], shell=True)
 		print "Completed the test..."
@@ -69,7 +69,7 @@ def execute_netem():
 	subprocess.call([netem_command], shell=True)
 
 def execute_dummynet():
-	delay = randint(50, 500)
+	delay = randint(min_delay, max_delay)
 	dummynet_command = "sudo ipfw pipe 1 config delay %dms" % delay
 	subprocess.call([dummynet_command], shell=True)
 
@@ -77,21 +77,61 @@ def run_scenarios():
 	# add header
 	import datetime
 	add_header_for_test_case("Date-time: " + datetime.datetime.now().time() .isoformat() + "\n")
-	add_header_for_test_case("Results with no network config\n")
 
-	# execute the tests
+	# 1. execute the tests no network cahnge
+	add_header_for_test_case("Results with no network config\n")
 	execute_test()
 
 	jitter_thread = JitterThread('jitter_thread')
-	jitter_thread.start()
 
-	add_header_for_test_case("Results with network config\n")
+	global min_delay
+	global max_delay
+	
+	# 2. execute the tests with network cahnge	
+	min_delay=50
+	max_delay=80
+	jitter_thread.start()	
+	add_header_for_test_case("Results with network config min_delay: %d  max_delay: %d\n" % (min_delay, max_delay))
 	execute_test()
-
 	jitter_thread.shutdown = True
 	jitter_thread.join()
 
-	'''
+	# 3. execute the tests with network cahnge
+	jitter_thread = JitterThread('jitter_thread')
+	min_delay=50
+	max_delay=100
+	jitter_thread.shutdown = False
+	jitter_thread.start()
+	add_header_for_test_case("Results with network config min_delay: %d  max_delay: %d\n" % (min_delay, max_delay))
+	execute_test()
+	jitter_thread.shutdown = True
+	jitter_thread.join()
+
+
+	# 4. execute the tests with network cahnge
+	jitter_thread = JitterThread('jitter_thread')
+	min_delay=50
+	max_delay=150
+	jitter_thread.shutdown = False
+	jitter_thread.start()
+	add_header_for_test_case("Results with network config min_delay: %d  max_delay: %d\n" % (min_delay, max_delay))
+	execute_test()
+	jitter_thread.shutdown = True
+	jitter_thread.join()
+
+	# 4. execute the tests with network cahnge
+	jitter_thread = JitterThread('jitter_thread')
+	min_delay=50
+	max_delay=200
+	jitter_thread.shutdown = False
+	jitter_thread.start()
+	add_header_for_test_case("Results with network config min_delay: %d  max_delay: %d\n" % (min_delay, max_delay))
+	execute_test()
+	jitter_thread.shutdown = True
+	jitter_thread.join()
+
+
+	'''	
 	# change the network config
 	subprocess.call(["sudo tc qdisc add dev lo root netem delay 100ms 50ms"], shell=True)
 	add_header_for_test_case("Results with 100ms 50ms\n")
