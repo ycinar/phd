@@ -5,8 +5,8 @@ import threading
 import shutil
 
 workspace = ""
-#results_file_path = "/home/ycinar/pesq_results"
-results_file_path = "/home/ycinar/dev/src/out/Debug/pesq_results"
+results_file_path = "/home/ycinar/pesq_results" # need to hard code as it is in hardcoded in the C++ application
+# results_file_path = "/home/ycinar/dev/src/out/Debug/pesq_results"
 
 test_command = ""
 
