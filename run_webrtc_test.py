@@ -6,7 +6,7 @@ import shutil
 
 workspace = ""
 #results_file_path = "/home/ycinar/pesq_results"
-results_file_path = "/home/ycinar/okul/src/out/Debug/pesq_results"
+results_file_path = "/home/ycinar/dev/src/out/Debug/pesq_results"
 
 test_command = ""
 
@@ -35,6 +35,8 @@ def prep_env():
 	subprocess.call([dummynet_command], shell=True)
 	dummynet_command = "sudo ipfw add 100 allow ip from 127.0.0.1 to 127.0.0.1 out"
 	subprocess.call([dummynet_command], shell=True)
+	dummynet_command = "sudo ipfw pipe 1 config delay 1ms" # doesnt work without this
+	subprocess.call([dummynet_command], shell=True)	
 
 def execute_test():
 	# execute the tests
@@ -49,7 +51,7 @@ def add_header_for_test_case(header):
 	results_file.write(header)
 	results_file.close()
 
-class jitter_thread(threading.Thread):
+class JitterThread(threading.Thread):
 	def __init__(self, name):
 		threading.Thread.__init__(self)
 		#self.threadID = threadID
@@ -80,14 +82,14 @@ def run_scenarios():
 	# execute the tests
 	execute_test()
 
-	netem_thread = jitter_thread('netem_thread')
-	netem_thread.start()
+	jitter_thread = JitterThread('jitter_thread')
+	jitter_thread.start()
 
 	add_header_for_test_case("Results with network config\n")
 	execute_test()
 
-	netem_thread.shutdown = True
-	netem_thread.join()
+	jitter_thread.shutdown = True
+	jitter_thread.join()
 
 	'''
 	# change the network config
