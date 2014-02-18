@@ -95,10 +95,6 @@ def run_scenarios():
 	import datetime
 	add_header_for_test_case("Date-time: " + datetime.datetime.now().time() .isoformat() + "\n")
 
-	# 1. execute the tests no network cahnge
-	add_header_for_test_case("Results with no network config\n")
-	execute_test()
-
 	global min_delay
 	global max_delay
 
