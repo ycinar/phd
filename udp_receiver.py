@@ -19,7 +19,7 @@ with open(receivedmsgs_file_path, 'a+') as msgs_file:
 	while True:
 	    data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
 	    ''' print "received message at :" + datetime.datetime.now().time().isoformat() + ": " + data '''
-	    print data
-	    msgs_file.write(data + '\n')
+	    print "received message at :" + datetime.datetime.now().time().isoformat() + ": " + data
+	    msgs_file.write("received message at :" + datetime.datetime.now().time().isoformat() + ": " + data + '\n')
 	    sock.sendto("hello back from server!", addr)
 

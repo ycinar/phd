@@ -1,5 +1,6 @@
 import socket
 import datetime 
+import time
 
 UDP_IP = "127.0.0.1"
 UDP_PORT = 5005
@@ -18,3 +19,4 @@ while True:
 	MESSAGE = datetime.datetime.now().time() .isoformat()
 	print "message:", MESSAGE 
 	sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+	time.sleep(0.02)
