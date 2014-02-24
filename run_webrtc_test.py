@@ -16,6 +16,7 @@ current_test_config = app_data + "current_test_config"
 jitter_output_file = app_data + "desired_jitter_output"
 measured_time_diff_path = app_data + "time_diff"
 time_diff_merged_path = app_data + 'time_merged_diff'
+time_diff_max_values_path = app_data + 'time_diff_max_values'
 test_command = ""
 min_delay = 1
 max_delay = 1
@@ -101,7 +102,7 @@ class PacketMonitor(threading.Thread):
 		self.shutdown = False
 	def run(self):		
 		print "Starting " + self.name
-		conmon_string = "sudo /home/ycinar/dev/phd/conmon lo udp --rtp"
+		conmon_string = "sudo conmon lo udp --rtp"
 		os.system(conmon_string)
 		print "Exiting " + self.name
 
@@ -206,14 +207,20 @@ def merge_time_diff_files():
 	max_no_in_list = 0
 	time_diff_files = glob.glob(app_data + "time_diff_*")
 
+	diff_max_dict = dict()
+
 	for time_diff_file in time_diff_files:
 		with open(time_diff_file) as tdf:
 			for line in tdf:
 				time_diff_list.append(int(line))
 			time_diff_dict[time_diff_file[len(app_data + 'time_diff_'):]] = time_diff_list
+			diff_max_dict['max_' + time_diff_file[len(app_data + 'time_diff_'):]] = max(time_diff_list)
 			if len(time_diff_list) > max_no_in_list:
 				max_no_in_list = len(time_diff_list)
 			time_diff_list = []
+
+	print diff_max_dict
+	add_to_file(time_diff_max_values_path, 'a', str(diff_max_dict))
 
 	value_to_print = ''
 	for key in time_diff_dict.keys():
