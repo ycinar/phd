@@ -17,6 +17,8 @@ jitter_output_file = app_data + "desired_jitter_output"
 measured_time_diff_path = app_data + "time_diff"
 time_diff_merged_path = app_data + 'time_merged_diff'
 time_diff_max_values_path = app_data + 'time_diff_max_values'
+rtp_folder = "./rtp/"
+packet_logs_folder = "./logs/"
 test_command = ""
 min_delay = 1
 max_delay = 1
@@ -52,6 +54,13 @@ def prep_env():
 
 	open(results_file_path, 'a').close()
 	open(current_test_config, 'a').close()
+	
+	if not os.path.exists(rtp_folder):
+	    os.makedirs(rtp_folder)
+
+	if not os.path.exists(packet_logs_folder):
+	    os.makedirs(packet_logs_folder)
+
 
 	dummynet_command = "sudo ipfw add 100 pipe 1 ip from 127.0.0.1 to 127.0.0.1 in"
 	subprocess.call([dummynet_command], shell=True)
@@ -151,7 +160,6 @@ def calculate_time_diff(exec_no):
 def clearPacketMonitor(exec_no):
 	os.system("sudo kill -9 $(pidof conmon)")
 
-	rtp_folder = "./rtp/"
 	rtp_files = os.listdir(rtp_folder)
 
 	if len(rtp_files) > 0:
