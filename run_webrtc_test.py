@@ -69,6 +69,8 @@ def prep_env():
 	dummynet_command = "sudo ipfw pipe 1 config delay 1ms" # doesnt work without this
 	subprocess.call([dummynet_command], shell=True)	
 
+	subprocess.call(["sudo tc qdisc add dev lo root handle 1: netem delay 1ms"], shell=True)
+
 def read_jitter_config():
 	global delay_list
 	global number_of_execution_for_each_scenario
@@ -127,6 +129,7 @@ class JitterThread(threading.Thread):
 		while not self.shutdown:
 		#for delay_val in itertools.cycle(delay_array):
 			execute_dummynet()
+			#execute_netem()
 		#	if self.shutdown:
 		#		break
 		print "Exiting " + self.name
@@ -136,7 +139,7 @@ class JitterThread(threading.Thread):
 		delay_profile = []
 
 def execute_netem():
-	delay = randint(50,500)
+	delay = randint(min_delay, max_delay)
 	netem_command = "sudo tc qdisc change dev lo root handle 1: netem delay %dms" % delay
 	subprocess.call([netem_command], shell=True)
 
