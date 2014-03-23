@@ -42,16 +42,10 @@ def prep_env():
 	print "workspace: ", workspace	
 	test_command = workspace + "browser_tests --gtest_filter=WebrtcAudioQualityBrowserTest.MANUAL_TestAudioQuality --single_process"
 
-	app_data_files = os.listdir(app_data)
-	# remove the results file
-	if len(app_data_files) > 0:
-		for app_data_file in app_data_files:
-			try:
-				os.remove(app_data + app_data_file)
-			except OSError:
-				pass
-	else:
-		print "app_data is already clean.\n"
+	if os.path.exists(app_data):
+		shutil.rmtree(app_data)
+	
+	os.makedirs(app_data)
 
 	open(results_file_path, 'a').close()
 	open(current_test_config, 'a').close()
