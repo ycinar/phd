@@ -213,9 +213,11 @@ def report_results():
 
 	sort_max_delay_values()
 
+	analyze_extracted_wav_files()
+
 def analyze_extracted_wav_files():
 	import trim_wav
-	app_data = "/home/ycinar/webrtc/"
+	#app_data = "/home/ycinar/webrtc/"
 	reference_file = "./human-voice-linux.wav"
 	trim_wav.extract_last_five(app_data + "*.wav")
 
