@@ -56,6 +56,8 @@ def prep_env():
 	if not os.path.exists(packet_logs_folder):
 	    os.makedirs(packet_logs_folder)
 
+	if os.path.exists("./pesq_results.txt"):
+		os.remove("./pesq_results.txt")
 
 	dummynet_command = "sudo ipfw add 100 pipe 1 ip from 127.0.0.1 to 127.0.0.1 in"
 	subprocess.call([dummynet_command], shell=True)
