@@ -218,7 +218,7 @@ def report_results():
 def analyze_extracted_wav_files():
 	import trim_wav
 	#app_data = "/home/ycinar/webrtc/"
-	reference_file = "./human-voice-linux.wav"
+	reference_file = "./human-voice-linux-extracted.wav"
 	trim_wav.extract_last_five(app_data + "*.wav")
 
 	import glob
