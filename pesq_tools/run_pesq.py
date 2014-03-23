@@ -9,7 +9,7 @@ def run_pesq(args):
 
 def execute_pesq(original_file, recorded_file):
 	pesq_command = "./pesq_tools/pesq +16000 " + original_file + " " + recorded_file + " | grep \'P.862 Prediction (Raw MOS, MOS-LQO):\'"
-	print "pesq_command: ", pesq_command
+	#print "pesq_command: ", pesq_command
 	subprocess.call([pesq_command], shell=True)
 	return
 

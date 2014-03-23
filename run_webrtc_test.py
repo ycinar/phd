@@ -221,22 +221,21 @@ def analyze_extracted_wav_files():
 
 	pesq_results = dict()
 	for extracted_file in extracted_files:
-		print extracted_file
+		#print extracted_file
 		if "human-voice-linux" in extracted_file: 
 			continue
 		min_delay, max_delay, execution = extracted_file[len(app_data + "extracted/"):].split("_")[:3]
-		print min_delay, max_delay, execution[:-4]
-		#print min_delay + "_" + max_delay
+		#print min_delay, max_delay, execution[:-4]
 
 		import sys
 		sys.path.append("./pesq_tools/")
 		import run_pesq
 		run_pesq.execute_pesq(reference_file, extracted_file)
 
-		result = 1
-		pesq_results[min_delay + "_" + max_delay] = [execution[:-4], result]
+		#result = 1 # get the result from run_pesq.execute_pesq 
+		#pesq_results[min_delay + "_" + max_delay] = [execution[:-4], result]
 
-	print pesq_results
+	#print pesq_results
 
 
 def sort_max_delay_values():
