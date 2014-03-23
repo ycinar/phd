@@ -1,3 +1,0 @@
-REFERENCE	 DEGRADED	 PESQMOS	 MOSLQO	 SAMPLE_FREQ	 MODE
-file1.wav	 file2.wav	 4.500	 4.549	 16000	nb
-file1.wav	 file2.wav	 4.500	 4.549	 16000	nb

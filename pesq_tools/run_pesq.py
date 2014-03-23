@@ -4,8 +4,14 @@ import subprocess
 def run_pesq(args):
 	pesq_command = "./pesq +16000 " + args.original_file + " " + args.recorded_file + " | grep \'P.862 Prediction (Raw MOS, MOS-LQO):\'"
 	print "pesq_command: ", pesq_command
-	#
 	subprocess.call([pesq_command], shell=True)
+	return
+
+def execute_pesq(original_file, recorded_file):
+	pesq_command = "./pesq +16000 " + original_file + " " + recorded_file + " | grep \'P.862 Prediction (Raw MOS, MOS-LQO):\'"
+	print "pesq_command: ", pesq_command
+	subprocess.call([pesq_command], shell=True)
+	return
 
 def make_args_parser():
 	parser = argparse.ArgumentParser(version='%prog 0.1',
