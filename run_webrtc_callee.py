@@ -5,6 +5,36 @@ import json
 import packet_monitor
 import report
 
+def prep_env():
+	global workspace
+	global test_command
+
+	if os.path.isdir("/home/ycinar/dev/src/out/Debug/"):
+		workspace = "/home/ycinar/dev/src/out/Debug/"
+	elif os.path.isdir("/home/ycinar/okul/src/out/Debug/"):
+		workspace = "/home/ycinar/okul/src/out/Debug/"
+	else:
+		print "workspace is not found - script will fail"
+	print "workspace: ", workspace	
+	test_command = workspace + "browser_tests --gtest_filter=WebrtcAudioQualityBrowserTest.MANUAL_TestAudioQuality --single_process"
+
+	if os.path.exists(app_data):
+		shutil.rmtree(app_data)
+	
+	os.makedirs(app_data)
+
+	open(results_file_path, 'a').close()
+	open(current_test_config, 'a').close()
+	
+	if not os.path.exists(rtp_folder):
+	    os.makedirs(rtp_folder)
+
+	if not os.path.exists(packet_logs_folder):
+	    os.makedirs(packet_logs_folder)
+
+	if os.path.exists("./pesq_results.txt"):
+		os.remove("./pesq_results.txt")
+
 def handle_test_instruction():
 	TCP_IP = '0.0.0.0'
 	TCP_PORT = 5007
@@ -38,6 +68,7 @@ def handle_test_instruction():
 
 def main():
 	print "Started callee"
+	prep_env()
 	handle_test_instruction()
 
 if __name__ == '__main__':
