@@ -4,6 +4,7 @@ import threading
 import json
 import packet_monitor
 import report
+import os
 
 def prep_env():
 	global workspace
