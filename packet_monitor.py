@@ -14,7 +14,7 @@ class PacketMonitor(threading.Thread):
 		self.shutdown = False
 	def run(self):		
 		print "Starting " + self.name
-		conmon_string = "sudo conmon lo udp --rtp"
+		conmon_string = "sudo conmon eth0 udp --rtp"
 		os.system(conmon_string)
 		print "Exiting " + self.name
 
