@@ -60,9 +60,9 @@ def handle_test_instruction():
 	shutdown = False
 	while not shutdown:
 	    data = conn.recv(BUFFER_SIZE)
-	    if not data: break
-	    data = json.loads(data)
 	    print "received data:", data
+	    if not data: break
+	    data = json.loads(data)	    
 	    
 	    if data['command'] == 'START_CALLEE':
 			packet_mon_thread = packet_monitor.PacketMonitor('packet_mon')
