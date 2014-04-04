@@ -3,12 +3,22 @@ from os import listdir
 from os.path import isfile, join
 
 time_diff_file_path = './time_diff'
+app_data = "/home/ycinar/webrtc/"
+measured_time_diff_path = app_data + "time_diff"
 
 def prep():
 	try:
 		os.remove(time_diff_file_path)
 	except OSError:
 		pass
+
+def get_time_diff(exec_no, min_delay, max_delay):
+	time_diff_list = calculate_time_diff()
+	if len(time_diff_list) > 0:
+		with open("%s_%s_%s_%s" % (measured_time_diff_path, str(min_delay), str(max_delay), str(exec_no)), 'a+') as time_diff_file:
+			for td in time_diff_list:
+				time_diff_file.write(str(td) + "\n")
+			time_diff_file.close()
 
 def calculate_time_diff():
 
