@@ -5,10 +5,14 @@ import json
 import packet_monitor
 import report
 import os
+import shutil
+
+workspace = ""
+app_data = "/home/ycinar/webrtc/"
+
 
 def prep_env():
 	global workspace
-	global test_command
 
 	if os.path.isdir("/home/ycinar/dev/src/out/Debug/"):
 		workspace = "/home/ycinar/dev/src/out/Debug/"
@@ -17,7 +21,6 @@ def prep_env():
 	else:
 		print "workspace is not found - script will fail"
 	print "workspace: ", workspace	
-	test_command = workspace + "browser_tests --gtest_filter=WebrtcAudioQualityBrowserTest.MANUAL_TestAudioQuality --single_process"
 
 	if os.path.exists(app_data):
 		shutil.rmtree(app_data)
