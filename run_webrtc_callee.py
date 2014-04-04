@@ -10,6 +10,8 @@ import shutil
 workspace = ""
 app_data = "/home/ycinar/webrtc/"
 results_file_path = app_data + "pesq_results" # need to hard code as it is in hardcoded in the C++ application
+rtp_folder = "./rtp/"
+packet_logs_folder = "./logs/"
 
 def prep_env():
 	global workspace
