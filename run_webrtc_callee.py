@@ -49,7 +49,7 @@ def prep_env():
 
 def handle_test_instruction():
 	TCP_IP = '0.0.0.0'
-	TCP_PORT = 5007
+	TCP_PORT = 5006
 	BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
 
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
