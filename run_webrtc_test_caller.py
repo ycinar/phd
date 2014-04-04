@@ -145,7 +145,7 @@ def execute_dummynet():
 	os.system(dummynet_command)
 
 def setup_connection_between_callers():
-	TCP_IP = '192.168.255.212' # caller ip address
+	TCP_IP = '10.53.59.66' # caller ip address
 	TCP_PORT = 5007	
 	s.connect((TCP_IP, TCP_PORT))
 

@@ -19,8 +19,8 @@ def prep_env():
 	else:
 		print "workspace is not found - script will fail"
 	print "workspace: ", workspace	
-	callee_command = workspace + "browser_tests_callee --gtest_filter=WebrtcAudioQualityBrowserTest.MANUAL_TestAudioQuality --single_process"
-	caller_command = workspace + "browser_tests_caller --gtest_filter=WebrtcAudioQualityBrowserTest.MANUAL_TestAudioQuality --single_process"
+	callee_command = workspace + "browser_tests_callee_66 --gtest_filter=WebrtcAudioQualityBrowserTest.MANUAL_TestAudioQuality --single_process"
+	caller_command = workspace + "browser_tests_caller_66 --gtest_filter=WebrtcAudioQualityBrowserTest.MANUAL_TestAudioQuality --single_process"
 
 def start_callee_process():
 	prep_env()
