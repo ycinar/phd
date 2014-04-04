@@ -10,8 +10,14 @@ import shutil
 workspace = ""
 app_data = "/home/ycinar/webrtc/"
 results_file_path = app_data + "pesq_results" # need to hard code as it is in hardcoded in the C++ application
+current_test_config = app_data + "current_test_config"
 rtp_folder = "./rtp/"
 packet_logs_folder = "./logs/"
+
+def add_to_file(path, flag, text):
+	current_file = open(path, flag)
+	current_file.write(text)
+	current_file.close()
 
 def prep_env():
 	global workspace
@@ -30,6 +36,7 @@ def prep_env():
 	os.makedirs(app_data)
 
 	open(results_file_path, 'a').close()
+	open(current_test_config, 'a').close()
 	
 	if not os.path.exists(rtp_folder):
 	    os.makedirs(rtp_folder)
@@ -60,7 +67,10 @@ def handle_test_instruction():
 	    if data['command'] == 'START_CALLEE':
 			packet_mon_thread = packet_monitor.PacketMonitor('packet_mon')
 			packet_mon_thread.start()
-			conn.send("STARTED_CALLEE")    	
+			add_to_file( current_test_config, "w", "%d_%d_%d" % ( data['execution_no'], 
+																  data['min_delay'], 
+																  data['max_delay'] ) )
+			conn.send("STARTED_CALLEE")
 			run_webrtc_executable.start_callee_process()			
 			packet_monitor.stop_packet_monitor_and_get_time_diff(data['execution_no'], 
 																 data['min_delay'], 
