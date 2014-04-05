@@ -33,6 +33,7 @@ delay_array = [30, 100, 40, 60, 44, 99, 125, 180, 20, 80, 14, 54, 140, 190, 100,
 delay_profile = list()
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+jitter_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 BUFFER_SIZE = 1024
 
 def prep_env():
@@ -145,20 +146,24 @@ def execute_dummynet():
 	#subprocess.call([dummynet_command], shell=True)
 	os.system(dummynet_command)
 
-def setup_connection_between_callers():
+def setup_connections():
 	TCP_IP = '10.53.59.66' # caller ip address
-	TCP_PORT = 5006	
+	TCP_PORT = 5007
 	s.connect((TCP_IP, TCP_PORT))
 
-def send_message_to_callee(data):
+	TCP_IP = '10.148.80.171'
+	TCP_PORT = 5008
+	jitter_connection.connect((TCP_IP, TCP_PORT))
+
+def send_message(connection, data):
 	print "sending: ", data
-	s.send(data)
-	data = s.recv(BUFFER_SIZE)
+	connection.send(data)
+	data = connection.recv(BUFFER_SIZE)
 	print "received data:", data	
 	return data
 
-def recv_message_from_callee():
-	data = s.recv(BUFFER_SIZE)
+def recv_message_from_callee(connection):
+	data = connection.recv(BUFFER_SIZE)
 	print "received data:", data
 	return data
 
@@ -168,16 +173,27 @@ def request_callee_start(current_min_delay, current_max_delay, current_execution
 						'max_delay': current_max_delay, 
 						'execution_no': current_execution_no
 						}
-	send_message_to_callee(json.dumps(execution_config))
+	send_message(s, json.dumps(execution_config))
 	time.sleep(2)
 
 def is_callee_finished():
 	print "Waiting for callee to finish"
-	data = recv_message_from_callee()
+	data = recv_message_from_callee(s)
 	print "callee returned"
 	if data == "FINISHED_CALLEE":
 		return True
 	return False
+
+def start_jitter():
+	jitter_config = {'command': 'START_JITTER'
+					 'min_delay': min_delay,
+					 'max_delay': max_delay
+					}
+	send_message(jitter_connection, jitter_config)
+
+def stop_jitter():
+	jitter_config = {'command': 'STOP_JITTER'}
+	send_message(jitter_connection, jitter_config)
 
 def run_scenarios():
 	# add header
@@ -186,7 +202,7 @@ def run_scenarios():
 	global min_delay
 	global max_delay
 
-	setup_connection_between_callers()
+	setup_connections()
 
 	try:
 		for delay in delay_list:
@@ -194,12 +210,11 @@ def run_scenarios():
 			max_delay = min_delay + int(delay[1])
 			print "Starting the tests for (%d,%d)" % (min_delay, max_delay)
 			add_to_file(results_file_path, "a", "Results with network config min_delay: %d  max_delay: %d\n" % (min_delay, max_delay))
-			jitter_thread = JitterThread('jitter_thread')
-			jitter_thread.shutdown = False
-			jitter_thread.start()			
-			execute_test()			
-			jitter_thread.shutdown = True
-			jitter_thread.join()			
+			if min_delay != 0:
+				start_jitter()
+			execute_test()
+			if min_delay != 0:			
+				stop_jitter()
 	except(KeyboardInterrupt, SystemExit):
 	        os.sys.exit("Interrupted by ctrl+c\n")
 

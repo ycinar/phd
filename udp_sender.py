@@ -2,8 +2,8 @@ import socket
 import datetime 
 import time
 
-UDP_IP = "127.0.0.1"
-UDP_PORT = 5005
+UDP_IP = "10.53.59.66"
+UDP_PORT = 5010
 
 current_time = datetime.datetime.now().time() 
 MESSAGE = "Hello, World! Time is " + current_time.isoformat()
