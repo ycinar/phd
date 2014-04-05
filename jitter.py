@@ -1,3 +1,5 @@
+import threading
+import socket
 from random import randint
 
 min_delay = 1
@@ -65,12 +67,14 @@ def handle_jitter_instruction():
 				print 'UNKNOWN_INSTRUCTION'
 				break			
 	    else:
+	    	print 'UNKNOWN_INSTRUCTION'
 	    	conn.send("UNKNOWN_INSTRUCTION")
 	    	break
+	conn.close()
 
 def main():
 	print "starting network emulator"
-	handle_jitter_instruction
+	handle_jitter_instruction()
 
 if __name__ == '__main__':
 	main()
