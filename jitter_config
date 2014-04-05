@@ -1,6 +1,6 @@
 {
 	"number_of_execution_for_each_scenario": 1,
-    "delay": [  [ 0  , 0   ],
+    "delay": [  [ 10  , 10   ],
 				[ 50 , 10  ],
 				[ 10 , 100 ],
 				[ 10 , 200 ],

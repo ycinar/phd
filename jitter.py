@@ -29,7 +29,16 @@ def execute_dummynet():
 	#global delay_profile
 	#delay_profile.append((datetime.datetime.now().time().isoformat(), delay))
 
-def handle_jitter_instruction():
+def prep():
+	dummynet_command = "sudo ipfw add 100 pipe 1 ip from any to any in"
+	subprocess.call([dummynet_command], shell=True)
+	dummynet_command = "sudo ipfw add 100 allow ip from any to any out"
+	subprocess.call([dummynet_command], shell=True)
+	dummynet_command = "sudo ipfw pipe 1 config delay 1ms" # doesnt work without this
+	subprocess.call([dummynet_command], shell=True)	
+
+
+def handle_jitter_instruction():	
 	TCP_IP = '0.0.0.0'
 	TCP_PORT = 5008
 	BUFFER_SIZE = 1024
@@ -44,6 +53,8 @@ def handle_jitter_instruction():
 	global min_delay
 	global max_delay
 
+	prep()
+	
 	while not shutdown:
 	    data = conn.recv(BUFFER_SIZE)
 	    print "received data:", data
@@ -61,6 +72,7 @@ def handle_jitter_instruction():
 			jitter_thread.start()
 			conn.send('STARTED_JITTER')
 			data = conn.recv(BUFFER_SIZE)
+		    print "received data:", data
 			data = json.loads(data)
 			if data['command'] == 'STOP_JITTER':
 				print 'stopping jitter'			

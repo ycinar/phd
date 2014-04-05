@@ -193,7 +193,7 @@ def start_jitter():
 
 def stop_jitter():
 	jitter_config = {'command': 'STOP_JITTER'}
-	send_message(jitter_connection, jitter_config)
+	send_message(jitter_connection, json.dumps(jitter_config))
 
 def run_scenarios():
 	# add header
