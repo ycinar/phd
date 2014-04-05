@@ -54,7 +54,7 @@ def handle_jitter_instruction():
 	global max_delay
 
 	prep()
-	
+
 	while not shutdown:
 	    data = conn.recv(BUFFER_SIZE)
 	    print "received data:", data
@@ -92,6 +92,8 @@ def handle_jitter_instruction():
 def main():
 	print "starting network emulator"
 	handle_jitter_instruction()
+	subprocess.call(["sudo ipfw -q flush"], shell=True)
+	os.sys.exit
 
 if __name__ == '__main__':
 	main()

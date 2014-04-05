@@ -151,7 +151,7 @@ def setup_connections():
 	TCP_PORT = 5007
 	s.connect((TCP_IP, TCP_PORT))
 
-	TCP_IP = '10.148.80.171'
+	TCP_IP = '10.61.212.125' # jitter handler ip adress
 	TCP_PORT = 5008
 	jitter_connection.connect((TCP_IP, TCP_PORT))
 
