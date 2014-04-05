@@ -65,14 +65,14 @@ def prep_env():
 	if os.path.exists("./pesq_results.txt"):
 		os.remove("./pesq_results.txt")
 
-	dummynet_command = "sudo ipfw add 100 pipe 1 ip from 127.0.0.1 to 127.0.0.1 in"
+	dummynet_command = "sudo ipfw add 100 pipe 1 ip from any to any in"
 	subprocess.call([dummynet_command], shell=True)
-	dummynet_command = "sudo ipfw add 100 allow ip from 127.0.0.1 to 127.0.0.1 out"
+	dummynet_command = "sudo ipfw add 100 allow ip from any to any out"
 	subprocess.call([dummynet_command], shell=True)
 	dummynet_command = "sudo ipfw pipe 1 config delay 1ms" # doesnt work without this
 	subprocess.call([dummynet_command], shell=True)	
 
-	subprocess.call(["sudo tc qdisc add dev lo root handle 1: netem delay 1ms"], shell=True)
+	#subprocess.call(["sudo tc qdisc add dev lo root handle 1: netem delay 1ms"], shell=True)
 
 def read_jitter_config():
 	global delay_list
@@ -103,6 +103,7 @@ def execute_test():
 		run_webrtc_executable.start_caller_process()
 		print "Completed the execution..."
 		packet_monitor.stop_packet_monitor_and_get_time_diff(x, min_delay, max_delay)
+		is_callee_finished()
 
 def add_to_file(path, flag, text):
 	current_file = open(path, flag)
@@ -171,7 +172,9 @@ def request_callee_start(current_min_delay, current_max_delay, current_execution
 	time.sleep(2)
 
 def is_callee_finished():
+	print "Waiting for callee to finish"
 	data = recv_message_from_callee()
+	print "callee returned"
 	if data == "FINISHED_CALLEE":
 		return True
 	return False
@@ -194,8 +197,7 @@ def run_scenarios():
 			jitter_thread = JitterThread('jitter_thread')
 			jitter_thread.shutdown = False
 			jitter_thread.start()			
-			execute_test()
-			is_callee_finished()
+			execute_test()			
 			jitter_thread.shutdown = True
 			jitter_thread.join()			
 	except(KeyboardInterrupt, SystemExit):

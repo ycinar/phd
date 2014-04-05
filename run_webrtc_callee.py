@@ -61,15 +61,19 @@ def handle_test_instruction():
 	while not shutdown:
 	    data = conn.recv(BUFFER_SIZE)
 	    print "received data:", data
-	    if not data: break
+	    if not data: 
+	    	print "there is no data received"
+	    	break
 	    data = json.loads(data)	    
 	    
 	    if data['command'] == 'START_CALLEE':
 			packet_mon_thread = packet_monitor.PacketMonitor('packet_mon')
 			packet_mon_thread.start()
-			add_to_file( current_test_config, "w", "%d_%d_%d" % ( data['execution_no'], 
-																  data['min_delay'], 
-																  data['max_delay'] ) )
+			add_to_file( current_test_config, "w", "%d_%d_%d" % ( data['min_delay'], 
+																  data['max_delay'],
+																  data['execution_no'] ) )
+			add_to_file(results_file_path, "a", "Results with network config min_delay: %d  max_delay: %d execution_no: %d \n" % 
+																	(data['min_delay'], data['max_delay'], data['execution_no'] ))
 			conn.send("STARTED_CALLEE")
 			run_webrtc_executable.start_callee_process()			
 			packet_monitor.stop_packet_monitor_and_get_time_diff(data['execution_no'], 
@@ -78,6 +82,7 @@ def handle_test_instruction():
 			conn.send("FINISHED_CALLEE")
 	    else:
 	    	conn.send("UNKNOWN_INSTRUCTION")
+	    	break
 	conn.close()
 	report.report_results()
 
