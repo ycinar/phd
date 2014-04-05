@@ -66,6 +66,7 @@ def prep_env():
 	if os.path.exists("./pesq_results.txt"):
 		os.remove("./pesq_results.txt")
 
+	'''
 	dummynet_command = "sudo ipfw add 100 pipe 1 ip from any to any in"
 	subprocess.call([dummynet_command], shell=True)
 	dummynet_command = "sudo ipfw add 100 allow ip from any to any out"
@@ -73,8 +74,9 @@ def prep_env():
 	dummynet_command = "sudo ipfw pipe 1 config delay 1ms" # doesnt work without this
 	subprocess.call([dummynet_command], shell=True)	
 
-	#subprocess.call(["sudo tc qdisc add dev lo root handle 1: netem delay 1ms"], shell=True)
-
+	subprocess.call(["sudo tc qdisc add dev lo root handle 1: netem delay 1ms"], shell=True)
+	'''
+	
 def read_jitter_config():
 	global delay_list
 	global number_of_execution_for_each_scenario
@@ -151,7 +153,7 @@ def setup_connections():
 	TCP_PORT = 5007
 	s.connect((TCP_IP, TCP_PORT))
 
-	TCP_IP = '10.61.212.125' # jitter handler ip adress
+	TCP_IP = '192.168.255.1' # jitter handler ip adress
 	TCP_PORT = 5008
 	jitter_connection.connect((TCP_IP, TCP_PORT))
 
