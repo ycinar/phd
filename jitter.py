@@ -61,12 +61,15 @@ def handle_jitter_instruction():
 			jitter_thread.start()
 			conn.send('STARTED_JITTER')
 			data = conn.recv(BUFFER_SIZE)
+			data = json.loads(data)
 			if data['command'] == 'STOP_JITTER':
 				print 'stopping jitter'			
 				jitter_thread.shutdown = True
 				jitter_thread.join()
+				conn.send("STOPED_JITTER")
 			else:
 				print 'UNKNOWN_INSTRUCTION'
+				conn.send("UNKNOWN_INSTRUCTION")
 				break			
 	    else:
 	    	print 'UNKNOWN_INSTRUCTION'
