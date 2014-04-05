@@ -50,8 +50,8 @@ def handle_jitter_instruction():
 	    data = json.loads(data)	    
 	    
 	    if data['command'] == 'START_JITTER':
-	    	min_delay = data['min_delay']
-	    	max_delay = data['max_delay']
+			min_delay = data['min_delay']
+			max_delay = data['max_delay']
 			jitter_thread = JitterThread('jitter_thread')
 			jitter_thread.shutdown = False			
 			jitter_thread.start()
