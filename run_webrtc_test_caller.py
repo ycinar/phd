@@ -185,11 +185,11 @@ def is_callee_finished():
 	return False
 
 def start_jitter():
-	jitter_config = {'command': 'START_JITTER'
+	jitter_config = {'command': 'START_JITTER',
 					 'min_delay': min_delay,
 					 'max_delay': max_delay
 					}
-	send_message(jitter_connection, jitter_config)
+	send_message(jitter_connection, json.dumps(jitter_config))
 
 def stop_jitter():
 	jitter_config = {'command': 'STOP_JITTER'}
