@@ -25,7 +25,7 @@ class JitterThread(threading.Thread):
 
 def execute_dummynet():
 	delay = randint(min_delay, max_delay)
-	dummynet_command = "sudo ipfw pipe 1 config delay %dms" % delay
+	dummynet_command = "sudo ipfw pipe 40270 config delay %dms" % delay
 	os.system(dummynet_command)
 	#global delay_profile
 	#delay_profile.append((datetime.datetime.now().time().isoformat(), delay))
@@ -54,7 +54,7 @@ def handle_jitter_instruction():
 	global min_delay
 	global max_delay
 
-	prep()
+	#prep()
 
 	while not shutdown:
 	    data = conn.recv(BUFFER_SIZE)
@@ -89,11 +89,13 @@ def handle_jitter_instruction():
 	    	conn.send("UNKNOWN_INSTRUCTION")
 	    	break
 	conn.close()
-
+	'''
+	subprocess.call(["sudo ipfw pipe 1 delete"], shell=True)
+	subprocess.call(["sudo ipfw -q flush"], shell=True)
+	'''
 def main():
 	print "starting network emulator"
 	handle_jitter_instruction()
-	subprocess.call(["sudo ipfw -q flush"], shell=True)
 	os.sys.exit
 
 if __name__ == '__main__':

@@ -59,5 +59,40 @@ def calculate_time_diff():
 	#print time_diff[0:50]
 	return time_diff
 
+def add_to_file(path, flag, text):
+	current_file = open(path, flag)
+	current_file.write(text)
+	current_file.close()
+
+def calculate_tranmission_delay():
+
+	caller_folder = app_data + "caller/"
+	callee_folder = app_data + "callee/"
+
+	caller_files = listdir(caller_folder)
+	callee_files = listdir(callee_folder)
+
+	if len(caller_files) > 0 and len(callee_files) > 0:
+		for caller_file in caller_files:
+			print "processing ", caller_file
+			time_stamps_caller = list()
+			time_stamps_callee = list()			
+			with open (caller_folder + caller_file) as rtp_file:
+				for line in rtp_file:
+					time_stamps_caller.append(float(line.split()[0]))
+			with open (callee_folder + caller_file) as rtp_file:
+				for line in rtp_file:
+					time_stamps_callee.append(float(line.split()[0]))
+			for time_stamp_caller, time_stamp_callee in zip(time_stamps_caller, time_stamps_callee):
+				tranmission_delay = str(int((time_stamp_callee - time_stamp_caller - 34.9) * 1000))
+				record = "%s 	%s 	%s\n" % (time_stamp_callee, time_stamp_caller, tranmission_delay)
+				file_name = app_data + "tranmission_delay_" + caller_file
+				add_to_file(file_name, "a+", record)
+				
+	else:
+		print "len(callee_files): ", len(callee_files)
+		print "len(caller_files): ", len(caller_files)
+		print "exit"
+
 if __name__ == '__main__':
 	calculate_time_diff()

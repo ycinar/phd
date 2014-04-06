@@ -1,4 +1,5 @@
 import json
+import time_diff
 
 app_data = "/home/ycinar/webrtc/"
 results_file_path = app_data + "pesq_results"
@@ -17,6 +18,8 @@ def report_results():
 		for line in results_file:
 			print line
 	results_file.close()
+
+	#time_diff.calculate_tranmission_delay()
 
 	merge_time_diff_files()
 
